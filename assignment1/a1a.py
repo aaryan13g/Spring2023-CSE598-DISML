@@ -37,10 +37,11 @@ train_data = train_data.shuffle(10000) # if you want to shuffle your data
 train_data = train_data.batch(batch_size)
 
 # create testing Dataset and batch it
-test_data = None
+test_data = tf.data.Dataset.from_tensor_slices(test)
 #############################
 ########## TO DO ############
 #############################
+test_data = test_data.batch(batch_size)
 
 
 # Step 3: create weights and bias
@@ -52,13 +53,15 @@ w, b = None, None
 #############################
 ########## TO DO ############
 #############################
-
+w = tf.Variable(tf.ones(shape=(784, 10)), name='weight')
+b = tf.Variable(tf.zeros(shape=(1, 10)), name='bias')
 
 # Step 4: build model
 # the model that returns the logits.
 # this logits will be later passed through softmax layer
 def compute_logits(img):
-    pass
+    logits = tf.matmul(img, w) + b
+    return logits
 #############################
 ########## TO DO ############
 #############################
@@ -68,7 +71,9 @@ def compute_logits(img):
 # Step 5: define loss function
 # use cross entropy of softmax of logits as the loss function
 def compute_loss(logits, labels):
-    pass
+    entropy = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels, name='entropy')
+    loss = tf.reduce_mean(entropy, name='loss')
+    return loss
 #############################
 ########## TO DO ############
 #############################
@@ -80,6 +85,7 @@ optimizer = None
 #############################
 ########## TO DO ############
 #############################
+optimizer = tf.optimizers.Adam(learning_rate)
 
 # Step 7: calculate accuracy
 def compute_accuracy(dataset):
